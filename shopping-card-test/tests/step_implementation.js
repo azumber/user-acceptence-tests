@@ -2,22 +2,11 @@
 "use strict";
 const path = require('path');
 const {
+    focus,
     openBrowser,
-    write,
     closeBrowser,
     goto,
-    press,
-    screenshot,
-    above,
     click,
-    checkBox,
-    listItem,
-    toLeftOf,
-    link,
-    text,
-    into,
-    textBox,
-    evaluate
 } = require('taiko');
 const assert = require("assert");
 const headless = process.env.headless_chrome.toLowerCase() === 'true';
@@ -32,59 +21,46 @@ afterSuite(async () => {
     await closeBrowser();
 });
 
-// Return a screenshot file name
-gauge.customScreenshotWriter = async function () {
-    const screenshotFilePath = path.join(process.env['gauge_screenshots_dir'],
-        `screenshot-${process.hrtime.bigint()}.png`);
-
-    await screenshot({
-        path: screenshotFilePath
-    });
-    return path.basename(screenshotFilePath);
-};
-
-step("Add task <item>", async (item) => {
-    await write(item, into(textBox("What needs to be done?")));
-    await press('Enter');
+step("Open basic-shopping-card application", async function () {
+    await goto("http://localhost:3000/");
 });
 
-step("View <type> tasks", async function (type) {
-    await click(link(type));
+step("Focus Add to List button", async function () {
+    await focus("Add to List");
 });
 
-step("Complete tasks <table>", async function (table) {
-    for (var row of table.rows) {
-        await click(checkBox(toLeftOf(row.cells[0])));
-    }
+step("Click Add to List button", async function () {
+    await click("Add to List");
 });
 
-step("Clear all tasks", async function () {
-    await evaluate(() => localStorage.clear());
+step("Focus Basket button", async function () {
+    await focus("Basket");
 });
 
-step("Open todo application", async function () {
-    await goto("todo.taiko.dev");
+step("Click Basket button", async function () {
+    await click("Basket");
 });
 
-step("Must not have <table>", async function (table) {
-    for (var row of table.rows) {
-        assert.ok(!await text(row.cells[0]).exists(0, 0));
-    }
+step("Focus + button", async function () {
+    await focus("+");
 });
 
-step("Must display <message>", async function (message) {
-    assert.ok(await text(message).exists(0, 0));
+step("Click + button", async function () {
+    await click("+");
 });
 
-step("Add tasks <table>", async function (table) {
-    for (var row of table.rows) {
-        await write(row.cells[0]);
-        await press('Enter');
-    }
+step("Focus - button", async function () {
+    await focus("-");
 });
 
-step("Must have <table>", async function (table) {
-    for (var row of table.rows) {
-        assert.ok(await text(row.cells[0]).exists());
-    }
+step("Click - button", async function () {
+    await click("-");
+});
+
+step("Focus Empty the Basket button", async function () {
+    await focus("Empty the Basket");
+});
+
+step("Click Empty the Basket button", async function () {
+    await click("Empty the Basket");
 });
